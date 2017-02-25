@@ -58,6 +58,7 @@ public class ApiVerticle extends AbstractVerticle {
 
         router.get("/letter/catch/").handler(event -> lettersApi.catchLetter(event));
         router.put("/letter/create/").handler(event -> lettersApi.createLetter(event));
+        router.put("/letter/addMessage/:token").handler(event -> lettersApi.addMessage(event));
 
         return router;
     }
