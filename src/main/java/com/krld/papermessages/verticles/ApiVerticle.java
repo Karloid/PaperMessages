@@ -2,6 +2,7 @@ package com.krld.papermessages.verticles;
 
 import com.krld.papermessages.api.LettersApi;
 import com.krld.papermessages.handlers.MyErrorHandler;
+import com.krld.papermessages.misc.FLog;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -21,9 +22,17 @@ public class ApiVerticle extends AbstractVerticle {
     public void start() throws Exception {
         super.start();
         lettersApi = new LettersApi();
-        server = vertx.createHttpServer(createOptions());
+        HttpServerOptions options = createOptions();
+        server = vertx.createHttpServer(options);
         server.requestHandler(createRouter()::accept);
-        server.listen();
+        server.listen(event -> {
+            if (event.succeeded()) {
+                FLog.d("Succeeded started web server on port: " + options.getPort());
+            } else {
+                FLog.e("Start FAILED for web server on port: " + options.getPort());
+                System.exit(1);
+            }
+        });
     }
 
     private Router createRouter() {
@@ -31,20 +40,7 @@ public class ApiVerticle extends AbstractVerticle {
         Router router = Router.router(vertx);
         router.route().failureHandler(new MyErrorHandler());
 
-		/* Static resources *//*
-        staticHandler(router);
-
-		*//* Session / cookies for users *//*
-        router.route().handler(CookieHandler.create());
-        SessionStore sessionStore = LocalSessionStore.create(vertx);
-        SessionHandler sessionHandler = SessionHandler.create(sessionStore);
-        router.route().handler(sessionHandler);
-        userContextHandler = new UserContextHandler(mongo);*/
-
-		/* Dynamic pages */
-
         router.mountSubRouter("/api", apiRouter());
-
 
         return router;
     }
