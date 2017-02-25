@@ -1,6 +1,8 @@
-package com.krld.papermessages;
+package com.krld.papermessages.api;
 
 import com.google.gson.Gson;
+import com.krld.papermessages.models.Letter;
+import com.krld.papermessages.models.Message;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 

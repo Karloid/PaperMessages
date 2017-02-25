@@ -1,14 +1,12 @@
-package com.krld.papermessages;
+package com.krld.papermessages.verticles;
 
-import com.google.gson.Gson;
+import com.krld.papermessages.api.LettersApi;
+import com.krld.papermessages.handlers.MyErrorHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.ErrorHandler;
 
 import static io.vertx.core.http.HttpHeaders.CONTENT_TYPE;
 
@@ -75,15 +73,4 @@ public class ApiVerticle extends AbstractVerticle {
         return options;
     }
 
-    private static class MyErrorHandler implements ErrorHandler {
-        @Override
-        public void handle(RoutingContext context) {
-            HttpServerResponse response = context.response();
-
-            if (context.statusCode() != -1) {
-                response.setStatusCode(context.statusCode());
-            }
-            response.end(new Gson().toJson(new ApiError()));
-        }
-    }
 }

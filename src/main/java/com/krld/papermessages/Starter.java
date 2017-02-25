@@ -1,5 +1,6 @@
 package com.krld.papermessages;
 
+import com.krld.papermessages.verticles.ApiVerticle;
 import io.vertx.core.Vertx;
 
 public class Starter {

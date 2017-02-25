@@ -1,4 +1,4 @@
-package com.krld.papermessages;
+package com.krld.papermessages.models;
 
 import java.util.List;
 
