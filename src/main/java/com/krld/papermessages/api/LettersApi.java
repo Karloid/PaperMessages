@@ -51,7 +51,7 @@ public class LettersApi {
             Utils.fail(context, new BadMessageError());
             return;
         }
-
+        msg.originServerTs = System.currentTimeMillis();
         Letter letter = Letter.create(msg);
         letters.add(letter);
         context.response().end(gson.toJson(new Object()));
@@ -90,6 +90,7 @@ public class LettersApi {
             Utils.fail(context, new UnknownTokenError());
             return;
         }
+        msg.originServerTs = System.currentTimeMillis();
         letter.messages.add(msg);
         tokensToLetter.remove(token);
         tokens.remove(token);
