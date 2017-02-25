@@ -1,8 +1,7 @@
 package com.krld.papermessages.api;
 
 import com.google.gson.Gson;
-import com.krld.papermessages.api.errors.BadMessageError;
-import com.krld.papermessages.api.errors.NoLettersAvailableError;
+import com.krld.papermessages.api.errors.*;
 import com.krld.papermessages.misc.Constants;
 import com.krld.papermessages.misc.JSONUtils;
 import com.krld.papermessages.misc.Utils;
@@ -42,12 +41,17 @@ public class LettersApi {
 
     public void createLetter(RoutingContext context) {
         String string = context.getBodyAsString();
-        Message msg = gson.fromJson(string, Message.class);
-        if (msg.text == null || msg.text.isEmpty()) {
-            context.put(Constants.EXTRA_ERROR, new BadMessageError());
-            context.fail(400);
+        if (Utils.isEmpty(string)) {
+            Utils.fail(context, new BadJsonError());
             return;
         }
+
+        Message msg = gson.fromJson(string, Message.class);
+        if (Utils.isEmpty(msg.text)) {
+            Utils.fail(context, new BadMessageError());
+            return;
+        }
+
         Letter letter = Letter.create(msg);
         letters.add(letter);
         context.response().end(gson.toJson(new Object()));
@@ -64,8 +68,32 @@ public class LettersApi {
     }
 
     public void addMessage(RoutingContext context) {
-        context.getBody();
-        //TODO
+        String token = context.request().getParam("token");
+        if (Utils.isEmpty(token)) {
+            Utils.fail(context, new MissingTokenError());
+            return;
+        }
+        String string = context.getBodyAsString();
+        if (Utils.isEmpty(string)) {
+            Utils.fail(context, new BadJsonError());
+            return;
+        }
+
+        Message msg = gson.fromJson(string, Message.class);
+        if (Utils.isEmpty(msg.text)) {
+            Utils.fail(context, new BadMessageError());
+            return;
+        }
+
+        Letter letter = tokensToLetter.get(token);
+        if (letter == null) {
+            Utils.fail(context, new UnknownTokenError());
+            return;
+        }
+        letter.messages.add(msg);
+        tokensToLetter.remove(token);
+        tokens.remove(token);
+
         context.response().end(gson.toJson(new Object()));
     }
 }

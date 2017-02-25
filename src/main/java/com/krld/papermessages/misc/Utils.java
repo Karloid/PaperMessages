@@ -1,5 +1,8 @@
 package com.krld.papermessages.misc;
 
+import com.krld.papermessages.api.errors.ApiError;
+import io.vertx.ext.web.RoutingContext;
+
 import java.util.Random;
 
 public class Utils {
@@ -15,5 +18,14 @@ public class Utils {
             chars[i] = subset[index];
         }
         return new String(chars);
+    }
+
+    public static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+
+    public static void fail(RoutingContext context, ApiError error) {
+        context.put(Constants.EXTRA_ERROR, error);
+        context.fail(400);
     }
 }
